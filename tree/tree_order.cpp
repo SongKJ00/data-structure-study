@@ -32,33 +32,39 @@ public:
     return pRootNode_;
   }
 
-  void Inorder(Node* node)
-  {
-    if(node != nullptr)
-    {
-      std::cout << node->data_ << " ";
-      Inorder(node->left_);
-      Inorder(node->right_);
-    }
-  }
-
+  /* Preorder */
+  /* root -> left -> right */
   void Preorder(Node* node)
   {
     if(node != nullptr)
     {
-      Preorder(node->left_);
-      std::cout << node->data_ << " ";
-      Preorder(node->right_);
+      std::cout << node->data_ << " ";  // output root node
+      Preorder(node->left_);            // Preorder left sub tree
+      Preorder(node->right_);           // Preorder right sub tree
     }
   }
 
+  /* Inorder */
+  /* left -> root -> right */
+  void Inorder(Node* node)
+  {
+    if(node != nullptr)
+    {
+      Inorder(node->left_);             // Inorder left sub tree
+      std::cout << node->data_ << " ";  // output root node
+      Inorder(node->right_);            // Inorder right sub tree
+    }
+  }
+
+  /* Postorder */
+  /* left -> right -> root */
   void Postorder(Node* node)
   {
     if(node != nullptr)
     {
-      Postorder(node->left_);
-      Postorder(node->right_);
-      std::cout << node->data_ << " ";
+      Postorder(node->left_);           // Postorder left sub tree
+      Postorder(node->right_);          // Postorder right sub tree
+      std::cout << node->data_ << " ";  // output root node
     }
   }
 };
@@ -81,12 +87,12 @@ int main(void)
 
   t.SetRootNode(n1);
 
-  std::cout << "Inorder" << std::endl;
-  t.Inorder(t.GetRootNode());
-  std::cout << std::endl;
-
   std::cout << "Preorder" << std::endl;
   t.Preorder(t.GetRootNode());
+  std::cout << std::endl;
+
+  std::cout << "Inorder" << std::endl;
+  t.Inorder(t.GetRootNode());
   std::cout << std::endl;
 
   std::cout << "Postorder" << std::endl;

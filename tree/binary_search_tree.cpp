@@ -45,6 +45,12 @@ public:
     {
       return head_->children[Node::CHILD_TYPE::RIGHT];
     }
+    // 루트 노드가 없는 경우
+    else if((head_->children[Node::CHILD_TYPE::LEFT] == nullptr) && (head_->children[Node::CHILD_TYPE::RIGHT] == nullptr))
+    {
+      throw std::runtime_error("[GetRootNode] cannot find root node");
+    }
+    // 루트 노드가 2개인 경우(Invalid state)
     else
     {
       throw std::runtime_error("[GetRootNode] root node is more than 2");
@@ -271,13 +277,13 @@ private:
 
       currParentNode = currNode;
 
-      if(data < currParentNode->data_)
+      if(data < currNode->data_)
       {
-        currNode = currParentNode->children[Node::CHILD_TYPE::LEFT];
+        currNode = currNode->children[Node::CHILD_TYPE::LEFT];
       }
       else
       {
-        currNode = currParentNode->children[Node::CHILD_TYPE::RIGHT];
+        currNode = currNode->children[Node::CHILD_TYPE::RIGHT];
       }
     }
 

@@ -30,17 +30,45 @@ public:
   Tree(int data) :
     head_(new Node(0))
   {
-    head_->children[Node::CHILD_TYPE::LEFT] = new Node(data);
+    SetRootNode(new Node(data));
   }
 
   Node* GetRootNode()
   {
-    return head_->children[Node::CHILD_TYPE::LEFT];
+    // 왼쪽에 루트 노드가 있는 경우
+    if((head_->children[Node::CHILD_TYPE::LEFT] != nullptr) && (head_->children[Node::CHILD_TYPE::RIGHT] == nullptr))
+    {
+      return head_->children[Node::CHILD_TYPE::LEFT];
+    }
+    // 오른쪽에 루트 노드가 있는 경우
+    else if((head_->children[Node::CHILD_TYPE::LEFT] == nullptr) && (head_->children[Node::CHILD_TYPE::RIGHT] != nullptr))
+    {
+      return head_->children[Node::CHILD_TYPE::RIGHT];
+    }
+    else
+    {
+      throw std::runtime_error("[GetRootNode] root node is more than 2");
+    }
   }
 
-  Node* SetRootNode(Node* node)
+  void SetRootNode(Node* node)
   {
-    head_->children[Node::CHILD_TYPE::LEFT] = node;
+    Node::CHILD_TYPE direction;
+
+    if((head_->children[Node::CHILD_TYPE::LEFT] != nullptr) || (head_->children[Node::CHILD_TYPE::RIGHT] != nullptr))
+    {
+      throw std::runtime_error("[SetRootNode] another root node is already assigned");
+    }
+
+    if(node->data_ <= head_->data_)
+    {
+      direction = Node::CHILD_TYPE::LEFT;
+    }
+    else
+    {
+      direction = Node::CHILD_TYPE::RIGHT;
+    }
+    head_->children[direction] = node;
   }
 
   void Inorder(Node* node)
@@ -80,18 +108,10 @@ public:
 private:
   void DoInsertNode(int data)
   {
-    // 전체 트리의 루트 노드가 null인 경우에 바로 루트를 만들어주고 return
-    if(GetRootNode() == nullptr)
-    {
-      SetRootNode(new Node(data));
-      return;
-    }
+    Node* currParentNode = head_;   // 현재 노드의 부모를 저장할 포인터
+    Node* currNode = GetRootNode(); // 현재 노드를 저장할 포인터
 
-    Node* currParentNode = GetRootNode();   // 루트 노드를 저장할 포인터
-    Node* currNode = GetRootNode();       // 루트 노드를 타고 들어갈 노드(왼쪽 or 오른쪽 자식 노드)를 저장할 포인터
-                                      // 초기는 rootNode_로 설정
-
-    // 더 이상 자식 노드가 없을 때까지(잎 노드에 도달할 때까지)
+    // 현재 노드가 null일 때까지(더 이상 트리의 밑으로 내려갈 수 없을 때까지)
     while(currNode)
     {
       // data가 중복되는 경우(트리에 이미 있는 경우)
@@ -102,25 +122,25 @@ private:
 
       currParentNode = currNode;
 
-      // 루트 노드보다 값이 작은 경우 -> 루트 노드의 왼쪽으로 이동
-      if(data < currParentNode->data_)
+      // 현재 노드보다 값이 작은 경우 -> 현재 노드의 왼쪽으로 이동
+      if(data < currNode->data_)
       {
-        currNode = currParentNode->children[Node::CHILD_TYPE::LEFT];
+        currNode = currNode->children[Node::CHILD_TYPE::LEFT];
       }
-      // 루트 노드보다 값이 큰 경우 -> 루트 노드의 오른쪽으로 이동
+      // 현재 노드보다 값이 큰 경우 -> 현재 노드의 오른쪽으로 이동
       else
       {
-        currNode = currParentNode->children[Node::CHILD_TYPE::RIGHT];
+        currNode = currNode->children[Node::CHILD_TYPE::RIGHT];
       }
     }
 
     Node* newNode = new Node(data);
-    // 마지막 루트 노드보다 값이 작은 경우 -> 루트 노드의 왼쪽에 할당
+    // 현재 노드의 부모보다 값이 작은 경우 -> 부모의 왼쪽에 할당
     if(data < currParentNode->data_)
     {
       currParentNode->children[Node::CHILD_TYPE::LEFT] = newNode;
     }
-    // 마지막 루트 노드보다 값이 큰 경우 -> 루트 노드의 오른쪽에 할당
+    // 현재 노드의 부모보다 값이 큰 경우 -> 부모의 오른쪽에 할당
     else
     {
       currParentNode->children[Node::CHILD_TYPE::RIGHT] = newNode;

@@ -81,6 +81,18 @@ public:
     std::cout << std::endl;
   }
 
+  void dfsRecursive(int nodeIdx)
+  {
+    Node* node = nodes_[nodeIdx];
+    if(node->marked_ == true) { return; }
+    visit(node);
+    node->marked_ = true;
+    for(auto n: node->adjacent_)
+    {
+      dfsRecursive(n->data_);
+    }
+  }
+
   void bfs(int start)
   {
     std::queue<Node*> q;
@@ -141,6 +153,10 @@ int main(void)
 
   std::cout << "BFS" << std::endl;
   g.bfs(0);
+  g.ClearMarked();
+
+  std::cout << "DFS Recursive" << std::endl;
+  g.dfsRecursive(0);
   g.ClearMarked();
   return 0;
 }
